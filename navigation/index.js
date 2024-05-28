@@ -1,0 +1,48 @@
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import Colors from "../constants/Colors";
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import WelcomeScreen from "../screens/WelcomeScreen";
+import DashboardScreen from "../screens/DashboardScreen";
+import FeedBack from "../screens/FeedBack";
+import Calander from "../screens/CalanderScreen";
+// import AddPhoto from "../components/AddPhoto";
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: Colors.background,
+  },
+};
+
+export default function Navigation() {
+  return (
+    <NavigationContainer theme={theme}>
+      <RootNavigator />
+    </NavigationContainer>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+
+function RootNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="DashboardScreen" component={DashboardScreen} />
+      <Stack.Screen name="FeedBack" component={FeedBack} />
+      {/* <Stack.Screen name="AddPhoto" component={AddPhoto} /> */}
+      <Stack.Screen name="calander" component={Calander} />
+
+    </Stack.Navigator>
+  );
+}
