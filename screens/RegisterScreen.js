@@ -12,33 +12,65 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AppTextInput from "../components/AppTextInput";
-import Registercal from "../components/Registercal";
 import Spacing from "../constants/Spacing";
 import FontSize from "../constants/FontSize";
 import Colors from "../constants/Colors";
 import Font from "../constants/Font";
+import axios from "axios";
 
 const RegisterScreen = ({ navigation }) => {
-  const [dob, setDob] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm_password, setConfirmPassword] = useState('');
 
   const validateEmail = (email) => {
-    // Regular expression for email validation
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
 
-  const handleEmailChange = (text) => {
-    setEmail(text);
-  };
+  const handleSignUp = async () => {
+    if (!name || !email || !phone || !address || !password || !confirm_password) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
 
-  const handleSignUp = () => {
     if (!validateEmail(email)) {
       Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
 
-    // Proceed with sign-up process
+    if (password !== confirm_password) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    try {
+      console.log('Sending request to the server...');
+      const response = await axios.post('http://172.23.160.77:5001/register', {
+        name,
+        email,
+        phone,
+        address,
+        password,
+        confirm_password,
+      });
+
+      const data = response.data;
+      console.log('Response from server:', data);
+
+      if (data.status === 'success') {
+        Alert.alert('Success', data.data);
+        navigation.navigate('Login');
+      } else {
+        Alert.alert('Error', data.data);
+      }
+    } catch (error) {
+      console.log('Error:', error.message);
+      Alert.alert('Error', 'Something went wrong: ' + error.message);
+    }
   };
 
   return (
@@ -54,21 +86,41 @@ const RegisterScreen = ({ navigation }) => {
               <Text style={styles.title}>Create account</Text>
             </View>
             <View style={styles.inputContainer}>
-              <AppTextInput placeholder="Full Name" />
+              <AppTextInput
+                placeholder="Full Name"
+                value={name}
+                onChangeText={setName}
+              />
               <AppTextInput
                 placeholder="Email"
                 value={email}
-                onChangeText={handleEmailChange}
+                onChangeText={setEmail}
                 keyboardType="email-address"
                 style={styles.input}
               />
-              <AppTextInput placeholder="Phone Number" /> 
-            </View>
-            <View style={styles.inputContainer}>
-              <Registercal />
-              <AppTextInput placeholder="Address" />
-              <AppTextInput placeholder="Password" />
-              <AppTextInput placeholder="Confirm Password" />
+              <AppTextInput
+                placeholder="Phone Number"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+              />
+              <AppTextInput
+                placeholder="Address"
+                value={address}
+                onChangeText={setAddress}
+              />
+              <AppTextInput
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+              <AppTextInput
+                placeholder="Confirm Password"
+                value={confirm_password}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+              />
             </View>
             <TouchableOpacity style={styles.button} onPress={handleSignUp}>
               <Text style={styles.buttonText}>Sign up</Text>
