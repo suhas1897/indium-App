@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Platform
+  Alert,
 } from "react-native";
 import Spacing from "../constants/Spacing";
 import FontSize from "../constants/FontSize";
@@ -14,8 +14,34 @@ import Colors from "../constants/Colors";
 import Font from "../constants/Font";
 import { Ionicons } from "@expo/vector-icons";
 import AppTextInput from "../components/AppTextInput";
+import axios from "axios";
 
 const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Email and password are required');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://172.23.160.77:5001/login', { email, password });
+      const data = response.data;
+
+      if (data.status === 'success') {
+        Alert.alert('Success', 'Login successful');
+        navigation.navigate('DashboardScreen'); // Adjust this as per your navigation setup
+      } else {
+        Alert.alert('Error', data.data);
+      }
+    } catch (error) {
+      console.log('Error:', error.message);
+      Alert.alert('Error', 'Something went wrong: ' + error.message);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -25,13 +51,23 @@ const LoginScreen = ({ navigation }) => {
             <Text style={styles.subtitle}>Welcome back, you've been missed!</Text>
           </View>
           <View style={styles.inputContainer}>
-            <AppTextInput placeholder="Email" />
-            <AppTextInput placeholder="Password" />
+            <AppTextInput
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+            <AppTextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
           </View>
           <TouchableOpacity style={styles.forgotPassword}>
             <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("DashboardScreen")} style={styles.button}>
+          <TouchableOpacity onPress={handleLogin} style={styles.button}>
             <Text style={styles.buttonText}>Sign in</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Register")} style={styles.link}>
