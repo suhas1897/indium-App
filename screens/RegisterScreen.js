@@ -31,47 +31,49 @@ const RegisterScreen = ({ navigation }) => {
     return regex.test(email);
   };
 
-  const handleSignUp = async () => {
-    if (!name || !email || !phone || !address || !password || !confirm_password) {
-      Alert.alert('Error', 'All fields are required');
-      return;
+  // In your RegisterScreen component's handleSignUp function
+const handleSignUp = async () => {
+  if (!name || !email || !phone || !address || !password || !confirm_password) {
+    Alert.alert('Error', 'All fields are required');
+    return;
+  }
+
+  if (!validateEmail(email)) {
+    Alert.alert('Error', 'Please enter a valid email address');
+    return;
+  }
+
+  if (password !== confirm_password) {
+    Alert.alert('Error', 'Passwords do not match');
+    return;
+  }
+
+  try {
+    console.log('Sending request to the server...');
+    const response = await axios.post('http://172.22.216.148:5001/register', {
+      name,
+      email,
+      phone,
+      address,
+      password,
+      confirm_password,
+    });
+
+    const data = response.data;
+    console.log('Response from server:', data);
+
+    if (data.status === 'success') {
+      Alert.alert('Success', 'User registered. Please verify your email.');
+      navigation.navigate('VerifyOTPScreen', { email });
+    } else {
+      Alert.alert('Error', data.data);
     }
+  } catch (error) {
+    console.log('Error:', error.message);
+    Alert.alert('Error', 'Something went wrong: ' + error.message);
+  }
+};
 
-    if (!validateEmail(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
-      return;
-    }
-
-    if (password !== confirm_password) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
-    }
-
-    try {
-      console.log('Sending request to the server...');
-      const response = await axios.post('http://172.23.160.77:5001/register', {
-        name,
-        email,
-        phone,
-        address,
-        password,
-        confirm_password,
-      });
-
-      const data = response.data;
-      console.log('Response from server:', data);
-
-      if (data.status === 'success') {
-        Alert.alert('Success', data.data);
-        navigation.navigate('Login');
-      } else {
-        Alert.alert('Error', data.data);
-      }
-    } catch (error) {
-      console.log('Error:', error.message);
-      Alert.alert('Error', 'Something went wrong: ' + error.message);
-    }
-  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
