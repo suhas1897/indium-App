@@ -15,8 +15,10 @@ import Font from "../constants/Font";
 import { Ionicons } from "@expo/vector-icons";
 import AppTextInput from "../components/AppTextInput";
 import axios from "axios";
+import { useUser } from "../contexts/UserContext"; // Import the useUser hook
 
 const LoginScreen = ({ navigation }) => {
+  const { setUser } = useUser(); // Destructure setUser from the user context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -27,10 +29,11 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-      const response = await axios.post('http://172.23.160.77:5001/login', { email, password });
+      const response = await axios.post('http://192.168.85.11:5001/login', { email, password });
       const data = response.data;
 
       if (data.status === 'success') {
+        setUser({ email }); // Set the user context with the logged-in user's email
         Alert.alert('Success', 'Login successful');
         navigation.navigate('DashboardScreen'); // Adjust this as per your navigation setup
       } else {
@@ -64,7 +67,10 @@ const LoginScreen = ({ navigation }) => {
               secureTextEntry
             />
           </View>
-          <TouchableOpacity style={styles.forgotPassword}>
+          <TouchableOpacity
+            style={styles.forgotPassword}
+            onPress={() => navigation.navigate("ForgotPasswordScreen")}
+          >
             <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLogin} style={styles.button}>
