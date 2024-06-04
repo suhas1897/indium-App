@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AppTextInput from '../components/AppTextInput';
 import Spacing from '../constants/Spacing';
 import Font from '../constants/Font';
 import FontSize from '../constants/FontSize';
+import { useUser } from '../contexts/UserContext'; // Import the useUser hook
+import axios from 'axios';
 
 const FeedbackPage = () => {
+  const { user } = useUser(); // Access user context
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
 
@@ -14,13 +17,30 @@ const FeedbackPage = () => {
     setRating(value);
   };
 
-  const handleSubmitFeedback = () => {
-    // Implement submission logic (e.g., send feedback to server)
-    console.log('Rating:', rating);
-    console.log('Feedback:', feedback);
-    // Reset state after submission
-    setRating(0);
-    setFeedback('');
+  const handleSubmitFeedback = async () => {
+    if (!user || !user.email) {
+      Alert.alert('Error', 'User not logged in');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://192.168.85.11:5001/submit-feedback', {
+        email: user.email,
+        rating,
+        feedback,
+      });
+
+      if (response.data.status === 'success') {
+        Alert.alert('Success', 'Feedback submitted successfully');
+        // Reset state after submission
+        setRating(0);
+        setFeedback('');
+      } else {
+        Alert.alert('Error', response.data.message);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong: ' + error.message);
+    }
   };
 
   return (
