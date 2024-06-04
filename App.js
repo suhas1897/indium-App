@@ -1,17 +1,22 @@
-import { useFonts } from "expo-font";
-import { StatusBar } from "expo-status-bar";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import fonts from "./config/fonts";
-import Navigation from "./navigation";
-import React from "react";
+import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+import { UserProvider } from './contexts/UserContext'; // Adjust the import path as needed
+import fonts from './config/fonts';
+import Navigation from './navigation'; // Your custom navigation component
 
-export default function App() {
+const App = () => {
   const [fontsLoaded] = useFonts(fonts);
 
   return !fontsLoaded ? null : (
-    <SafeAreaProvider>
-      <Navigation />
-      <StatusBar />
-    </SafeAreaProvider>
+    <UserProvider>
+      <SafeAreaProvider>
+        <Navigation />
+        <StatusBar />
+      </SafeAreaProvider>
+    </UserProvider>
   );
-}
+};
+
+export default App;
