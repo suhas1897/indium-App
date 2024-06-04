@@ -6,8 +6,12 @@ import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import DashboardScreen from "../screens/DashboardScreen";
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
+import ResetPasswordScreen from '../screens/ResetPasswordScreen';
+import VerifyOTPScreen from '../screens/VerifyOTPScreen';
 import FeedBack from "../screens/FeedBack";
 import Calander from "../screens/CalanderScreen";
+//import VerifyOTPScreen from "../screens/VerifyOTPScreen";
 // import AddPhoto from "../components/AddPhoto";
 
 const theme = {
@@ -39,6 +43,10 @@ function RootNavigator() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="DashboardScreen" component={DashboardScreen} />
+      <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
+      <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
+      <Stack.Screen name="VerifyOTPScreen" component={VerifyOTPScreen} />
+      
       <Stack.Screen name="FeedBack" component={FeedBack} />
       {/* <Stack.Screen name="AddPhoto" component={AddPhoto} /> */}
       <Stack.Screen name="calander" component={Calander} />
